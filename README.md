@@ -1,5 +1,7 @@
 # Truffle Box (React)
 
+[![Join the chat at https://gitter.im/milliontokenhomepage/Lobby](https://badges.gitter.im/milliontokenhomepage/Lobby.svg)](https://gitter.im/milliontokenhomepage/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This box comes with everything you need to start using smart contracts from a react app. This is as barebones as it gets, so nothing stands in your way.
 
 ## Installation
