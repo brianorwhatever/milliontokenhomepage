@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
+import MillionTokenHomepageContract from '../build/contracts/MillionTokenHomepage.json'
 import Web3 from 'web3'
 
 import './css/oswald.css'
@@ -12,7 +12,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      storageValue: 0
+      storageValue: 0,
+      bids: []
     }
   }
 
@@ -30,31 +31,47 @@ class App extends Component {
     // Get the RPC provider and setup our SimpleStorage contract.
     const provider = new Web3.providers.HttpProvider('http://localhost:8545')
     const contract = require('truffle-contract')
-    const simpleStorage = contract(SimpleStorageContract)
-    simpleStorage.setProvider(provider)
+    const millionTokenHomepage = contract(MillionTokenHomepageContract)
+    millionTokenHomepage.setProvider(provider)
 
     // Get Web3 so we can get our accounts.
     const web3RPC = new Web3(provider)
 
     // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance
+    var millionTokenHomepageInstance
 
     // Get accounts.
     web3RPC.eth.getAccounts(function(error, accounts) {
       console.log(accounts)
 
-      simpleStorage.deployed().then(function(instance) {
-        simpleStorageInstance = instance
+      millionTokenHomepage.deployed().then(function(instance) {
+        millionTokenHomepageInstance = instance
 
-        // Stores a value of 5.
-        return simpleStorageInstance.set(5, {from: accounts[0]})
-      }).then(function(result) {
-        // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0])
-      }).then(function(result) {
-        // Update state with the result.
-        return self.setState({ storageValue: result.c[0] })
+        // // Stores a value of 5.
+        // return simpleStorageInstance.set(5, {from: accounts[0]})
+        for(var i = 0; i < 1000; i++) {
+          millionTokenHomepageInstance.getToken.call(i).then(function(i, result) {
+            var newBids = self.state.bids;
+            //console.log(result);
+            newBids[i] = result[3].toNumber();
+            self.setState({bids: newBids})
+            console.log(newBids)
+          }.bind(null, i))
+        }
       })
+        // return millionTokenHomepageInstance.bidOnToken(10, 10, 100, 100, 100, {from: accounts[0]})
+      // }).then(function(result) {
+      //   // Get the value from the contract to prove it worked.
+      //   debugger;
+      //   return millionTokenHomepageInstance.bidOnToken(10, 12, 100, 100, 100, {from: accounts[0]})
+      // }).then(function(result) {
+      //   // Update state with the result.
+      //   // millionTokenHomepageInstance.tokens(10, )
+      //   // .then(function (myStructArray) {
+      //   //     assert.equal(myStructArray.length, 2, "should only have 2 fixed size values");
+      //   // });
+      //   return self.setState({ storageValue: result.c[0] })
+      // })
     })
   }
 
@@ -73,12 +90,11 @@ class App extends Component {
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>The below will show a stored value of 5 by default if your contracts compiled and migrated successfully.</p>
-              <p>Try changing the value stored on <strong>line 50</strong> of App.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
+              <ul>
+                {this.state.bids.map(function(bid, index) {
+                  return <li>{bid}</li>
+                })}
+              </ul>
             </div>
           </div>
         </main>
